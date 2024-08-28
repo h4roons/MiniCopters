@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour
     void ChangeDirection()
     {
         movingRight = !movingRight; // Changing direction from right to left
+        Debug.Log(movingRight);
         Vector3 localScale = transform.localScale;
         localScale.x *= -1; 
         transform.localScale = localScale;
