@@ -39,6 +39,7 @@ public class Obstacle : MonoBehaviour
     private IEnumerator RestartLevelAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        levelFailPanel.SetActive(true);
+        ScoreManager.instance.ShowLevelFailedPanel();
+        destructionParticles.SetActive(false);
     }
 }

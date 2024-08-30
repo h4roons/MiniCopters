@@ -6,30 +6,31 @@ public class PlayerController : MonoBehaviour
     public float liftSpeed = 3f;
     public float moveSpeed = 2f;
     public float maxY = 5f;
-    public float tiltAngle = 15f;           // The maximum angle of tilt when changing direction
-    public float speedIncreaseFactor = 0.1f; // The factor by which speed increases when changing direction
-    public float tiltSmoothness = 5f;       // How smooth the tilt change is
-    public float wobbleFrequency = 2f;      // Frequency of the wobble effect
-    public float wobbleAmplitude = 2f;      // Amplitude of the wobble effect
+    public float tiltAngle = 15f;            // The maximum angle of tilt when changing direction
+    public float speedIncreaseFactor = 0.1f; // The factor by which speed increases when moving
+    public float tiltSmoothness = 5f;        // How smooth the tilt change is
+    public float wobbleFrequency = 2f;       // Frequency of the wobble effect
+    public float wobbleAmplitude = 2f;       // Amplitude of the wobble effect
     public GameObject levelFailPanel;
 
     private bool movingRight = true;
     private Rigidbody2D rb;
 
-    private float minX; // Minimum X position based on screen width
-    private float maxX; // Maximum X position based on screen width
+    private float minX;             // Minimum X position based on screen width
+    private float maxX;             // Maximum X position based on screen width
     private float currentTilt = 0f; // Current tilt angle
-    private float wobbleTime = 0f; // Time tracker for wobble effect
-
-    //public audioManager audio;
+    private float wobbleTime = 0f;  // Time tracker for wobble effect
+    private float baseMoveSpeed;    // To store the initial move speed for reset
 
     void Start()
     {
-      //  audio.PlaySound("BGM");
         levelFailPanel.SetActive(false);
         Time.timeScale = 1f;
         rb = GetComponent<Rigidbody2D>();
         rb.velocity = Vector2.up * liftSpeed;
+
+        // Store the initial move speed to reset it later
+        baseMoveSpeed = moveSpeed;
 
         // Calculate the screen boundaries dynamically
         CalculateScreenBounds();
@@ -54,14 +55,17 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 direction = movingRight ? Vector2.right : Vector2.left;
         rb.velocity = new Vector2(direction.x * moveSpeed, rb.velocity.y);
+
+        // Gradually increase speed while moving in the current direction
+        moveSpeed += speedIncreaseFactor * Time.deltaTime;
     }
 
     void ChangeDirection()
     {
         movingRight = !movingRight; // Change direction
 
-        // Gradually increase speed when changing direction
-        moveSpeed += speedIncreaseFactor;
+        // Reset speed when changing direction
+        moveSpeed = baseMoveSpeed;
 
         // Set target tilt based on direction
         currentTilt = movingRight ? -tiltAngle : tiltAngle;
@@ -111,15 +115,14 @@ public class PlayerController : MonoBehaviour
         // Calculate the screen width in world units
         float screenWidthInWorldUnits = mainCamera.orthographicSize * mainCamera.aspect;
 
-        
         minX = -screenWidthInWorldUnits;
         maxX = screenWidthInWorldUnits;
     }
 
+
     void RestartLevel()
     {
         Time.timeScale = 0f;
-        levelFailPanel.SetActive(true);
-        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        ScoreManager.instance.ShowLevelFailedPanel();
     }
 }

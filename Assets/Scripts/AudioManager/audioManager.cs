@@ -6,14 +6,14 @@ using UnityEngine.Audio;
 
 public class audioManager : MonoBehaviour
 {
-    public Audio[] Soundlist;
+    public audioClip[] Soundlist;
 
     public static audioManager instance;
 
 
     private void Awake()
     {
-        foreach (Audio sound in Soundlist)
+        foreach (audioClip sound in Soundlist)
         {
             sound.source = gameObject.AddComponent<AudioSource>();
             sound.source.clip = sound.clip;
@@ -22,12 +22,12 @@ public class audioManager : MonoBehaviour
     }
     public void PlaySound(string name)
     {
-        Audio sound = Array.Find(Soundlist, Audio => Audio.SoundName == name);
+        audioClip sound = Array.Find(Soundlist, Audio => Audio.SoundName == name);
         sound.source.Play();
     }
     public void StopSound(string name)
     {
-        Audio sound = Array.Find(Soundlist, Audio => Audio.SoundName == name);
+        audioClip sound = Array.Find(Soundlist, Audio => Audio.SoundName == name);
         sound.source.Stop();
     }
 
